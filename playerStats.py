@@ -15,7 +15,10 @@ soup = BeautifulSoup(html, 'html.parser')
 
 
 #List of desired tables 
-tables = ['stats_standard_dom_lg',
+tables = [
+	'stats_standard_dom_lg',
+	'stats_keeper_dom_lg',
+	'stats_keeper_adv_dom_lg',
 	'stats_shooting_dom_lg',
 	'stats_passing_dom_lg',
 	'stats_passing_types_dom_lg',
@@ -70,13 +73,59 @@ def cleanStats(statDict):
 	except KeyError:
 		print('playerStats: cleanStats: Key Error occured.')
 	except:
-		print('playerStats: cleanStats: Something else went wrong.')
-		print('Key Error occured.')
-	except:
 		print('Something else went wrong.')
 	return statDict
 
+def getStatsHeader(url, tables):
+	#Fetch the html
+	url = 'https://fbref.com{}'.format(url)
+	try:
+		request = Request(url, headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
+		'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
+		'Accept':'text/html,application/xhtml+xml,application/xml;'
+		'q=0.9,image/webp,*/*;q=0.8'})
+	except: 
+		print("playerInfo: scrapeInfo: Exception was raised when trying to create a Request object.")
+	try:
+		html = urlopen(request)
+	except:
+		print("playerInfo: scrapeInfo: Exception was raised when trying to open the url request.")
+		print("Exception was raised when trying to create a Request object.")
+	try:
+		html = urlopen(request)
+	except:
+		print("Exception was raised when trying to open the url request.")
 
+	soup = BeautifulSoup(html, 'html.parser')
+
+	#Columns of the first table (needs special loop because it has duplicate columns)
+	columns = [[]]
+	header = soup.find('table', {'id':tables[0]}).find('th', text="Season") #find the first column
+	columns.append(header.get_text())
+	while (header.find_next_sibling('th').get_text() != "Matches"):
+		header = header.find_next_sibling('th')
+		if header.get_text() in columns[0]:
+			columns[0].append(header.get_text() +  '/90')
+		else:
+			columns[0].append(header.get_text())
+
+	#Rest of the tables
+	for i in range(1, len(tables)):
+		try:
+			header = soup.find('table', {'id':tables[i]}).find('th', text="Season")
+			columns.append([])
+			while (header.find_next_sibling('th').get_text() != "Matches"):
+				header = header.find_next_sibling('th')
+				columns[i].append(header.get_text())
+		except:
+			print("playeStats: getStatsHeader: Column not found.")
+			print(tables[i])
+
+	return columns
+
+
+"""
 stats = scrapeStats(soup, tables)
 print(stats)
 print('\n' + 'Number of keys: ' + str(len(stats)))
+"""

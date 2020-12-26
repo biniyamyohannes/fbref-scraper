@@ -4,18 +4,18 @@
 import pymysql
 
 #Goes over the dictionary keys and creates the columns of the database table
-def createTable(header):
+def createTable(header, dbname):
     #Connect to MySql
     try:
         conn = pymysql.connect(host='localhost',
-        user='root', passwd='Jolaus2333', db='SoccerStats')
+        user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
     except:
         print("database: createTable: Exception was raised when trying to establish a connection to mysql.")
 
 	#Create table
     try:
-        cur.execute('CREATE TABLE IF NOT EXISTS stats (id VARCHAR(8) NOT NULL, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(id));')
+        cur.execute('CREATE TABLE IF NOT EXISTS (%s) (id VARCHAR(8) NOT NULL, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(id);' %(dbname))
     except:
         print("database: createTable: Exception was raised when trying to create a table.")
 
@@ -44,10 +44,10 @@ def createTable(header):
 #Add info to database
 def addInfo(info):
 
-	#Connect to MySql
+	#Connect to MySQL database
     try:
         conn = pymysql.connect(host='localhost',
-        user='root', passwd='Jolaus2333', db='SoccerStats')
+        user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
     except:
         print("database: addInfo: Exception was raised when trying to establish a connection to mysql.")
@@ -70,6 +70,42 @@ def addInfo(info):
                 print("database: addInfo: Exception was raised when trying to update a column.")
 	
 	#Close Connection
+    try:
+        conn.close()
+        cur.close()
+    except:
+        print("database: addInfo: Exception was raised when trying to close the connection/cursor.")
+
+def addStats(stats):
+
+    #Connect to MySQL database
+    try:
+        conn = pymysql.connect(host='localhost',
+            user='root',
+            passwd='Jolaus2333',
+            db='SoccerStats')
+        cur = conn.cursor()
+    except:
+        print("databaseL addStats: Exception was raised when trying to establish a connection to mysql.")
+
+    #Add data
+    for key in stats:
+        if key == 'id':
+            try:
+                cur.execute("INSERT INTO stats (%s) VALUES ('%s');" % (key, stats[key]))
+                cur.connection.commit()
+            except:
+                print("database: addInfo: Exception was raised when trying to insert primary key (id).")
+        else:
+            try:
+                print('UPDATE stats SET {0} = "{1}" WHERE id = "{2}";' .format(key, stats[key], info['id']))
+                 #try:
+                cur.execute('UPDATE stats SET {0} = "{1}" WHERE id = "{2}";' .format(key, stats[key], stats['id']))
+                cur.connection.commit()
+            except:
+                print("database: addInfo: Exception was raised when trying to update a column.")
+    
+    #Close Connection
     try:
         conn.close()
         cur.close()

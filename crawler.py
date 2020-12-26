@@ -10,7 +10,7 @@ from urllib.error import URLError
 from bs4 import BeautifulSoup
 import database as db
 import playerInfo as pi
-#import playerStats as ps
+import playerStats as ps
 import time
 import re
 
@@ -20,22 +20,19 @@ leagues = ['https://fbref.com/en/comps/12/La-Liga-Stats',
 		   'https://fbref.com/en/comps/20/Bundesliga-Stats',
 		   'https://fbref.com/en/comps/11/Serie-A-Stats']
 
-header = ['name', 'position', 'foot', 'height', 'weight', 'dob', 'cityob', 'countryob', 'nt', 'club', 'age']
-
-def crawl(leagues):
-	db.createTable(header)
-
 
 
 def crawl(leagues):
-	db.createTable(pi.scrapeInfo(getPlayers(getSquads(leagues[0])[0])[0]))
-	for league in leagues:
-		for squad in getSquads(league):
-			for player in getPlayers(squad):
-				print(pi.scrapeInfo(player))
-				db.addInfo(pi.scrapeInfo(player))
-				print("Sleep for 2 seconds.\n")
-				time.sleep(2.0)
+    header = ['name', 'position', 'foot', 'height', 'weight', 'dob', 'cityob', 'countryob', 'nt', 'club', 'age']
+    db.createTable(header, 'stats')
+    print(ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[0], ps.tables))
+    for league in leagues:
+        for squad in getSquads(league):
+            for player in getPlayers(squad):
+                print(pi.scrapeInfo(player))
+                db.addInfo(pi.scrapeInfo(player))
+                print("Sleep for 2 seconds.\n")
+                time.sleep(2.0)
 
 
 def getSquads(league):
