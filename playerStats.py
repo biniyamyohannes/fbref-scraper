@@ -98,7 +98,7 @@ def getStatsHeader(url, tables):
 
 	soup = BeautifulSoup(html, 'html.parser')
 
-	#Columns of the first table (needs special loop because it has duplicate columns)
+	#Columns of the first table (needs special loop because it has some duplicate column names)
 	columns = [[]]
 	header = soup.find('table', {'id':tables[0]}).find('th', text="Season") #find the first column
 	columns.append(header.get_text())
@@ -108,24 +108,23 @@ def getStatsHeader(url, tables):
 			columns[0].append(header.get_text() +  '/90')
 		else:
 			columns[0].append(header.get_text())
+	
+	print(columns[0])
 
-	#Rest of the tables
-	for i in range(1, len(tables)):
-		try:
-			header = soup.find('table', {'id':tables[i]}).find('th', text="Season")
-			columns.append([])
-			while (header.find_next_sibling('th').get_text() != "Matches"):
-				header = header.find_next_sibling('th')
-				columns[i].append(header.get_text())
-		except:
-			print("playeStats: getStatsHeader: Column not found.")
-			print(tables[i])
+	#General goalkeeping (has to be collected manually)
+	features = ['GA90', 'etc...']
+	columns.append([])
+	try:
+		#find the table
+		for i in range(len(features)): 		#iterate over the list of columns
+			pass
+	except:
+		print("playeStats: getStatsHeader: Column not found.")
+		print(tables[i])
+	print(columns[i])
 
 	return columns
 
 
-"""
-stats = scrapeStats(soup, tables)
-print(stats)
-print('\n' + 'Number of keys: ' + str(len(stats)))
-"""
+url = '/en/players/ee8508c0/Jan-Oblak'
+stats = getStatsHeader(url, tables)
