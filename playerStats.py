@@ -61,21 +61,6 @@ def scrapeStats(soup, tables):
 			statDict[header.get_text()] = cell.get_text()
 	return cleanStats(statDict)
 
-
-# Format the data
-def cleanStats(statDict):
-	try:
-		statDict['G+A/90'] = statDict.pop('G+A')
-		statDict['G-PK/90'] = statDict.pop('G-PK')
-		statDict['G+A-PK/90'] = statDict.pop('G+A-PK')
-		statDict['xG+xA/90'] = statDict.pop('xG+xA')
-		statDict['npxG+xA/90'] = statDict.pop('npxG+xA')
-	except KeyError:
-		print('playerStats: cleanStats: Key Error occured.')
-	except:
-		print('Something else went wrong.')
-	return statDict
-
 def getStatsHeader(url, tables):
 
 	#Fetch the html
@@ -102,6 +87,7 @@ def getStatsHeader(url, tables):
 
 	# Columns of the general goalkeeping table have to be added manually because bf4 search didn't work
 	if soup.find('table', {'id':tables[0]}) != None:
+		columns[0].append(tables[0])
 		gk_columns = ['season', 'age', 'squad', 'country', 'comp_level', 'lg_finish', 'games', 'games_starts', 'minutes', 'GA', 'GA90', 'SoTA', 'Saves', 'Save%', 'W', 'D', 'L', 'CS', 'CS%', 'PKatt', 'PKA', 'PKsv', 'PKm']
 		for i in range(len(gk_columns)):
 			columns[0].append(gk_columns[i])
@@ -109,9 +95,9 @@ def getStatsHeader(url, tables):
 	# Other tables
 	for i in range(1, len(tables)):
 		try:
-			print(tables[i])
-			columns.append([])
-			header = soup.find('table', {'id':tables[i]}).find('th', text="Season") #find the first column																# don't duplicate the season feature
+			columns.append([])	
+			header = soup.find('table', {'id':tables[i]}).find('th', text="Season") #find the first column			
+			columns[i].append(tables[i])									
 			while (header.find_next_sibling('th').get_text() != "Matches"):
 				header = header.find_next_sibling('th')
 				if any(header.attrs['data-stat'] in column for column in columns):
@@ -124,9 +110,3 @@ def getStatsHeader(url, tables):
 	columns = [columns[i] for i in range(len(columns)) if columns[i] != []]
 
 	return columns
-
-
-url = '/en/players/21512407/Kieran-Trippier'
-stats = getStatsHeader(url, tables)
-for i in range(len(stats)):
-	print(stats[i])
