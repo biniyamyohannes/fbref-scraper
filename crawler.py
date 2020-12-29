@@ -21,11 +21,14 @@ leagues = ['https://fbref.com/en/comps/12/La-Liga-Stats',
 		   'https://fbref.com/en/comps/11/Serie-A-Stats']
 
 
-
 def crawl(leagues):
     header = ['name', 'position', 'foot', 'height', 'weight', 'dob', 'cityob', 'countryob', 'nt', 'club', 'age']
-    db.createTable(header, 'stats')
-    print(ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[0], ps.tables))
+    outfield_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[0], ps.tables)
+    keeper_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[1], ps.tables)
+    db.createInfoTable(header)
+    db.createStatsTables(outfield_tables)
+    db.createStatsTables(keeper_tables)
+
     for league in leagues:
         for squad in getSquads(league):
             for player in getPlayers(squad):
@@ -49,8 +52,7 @@ def getSquads(league):
 	
 
 def getPlayers(squad):
-	request = Request('https://fbref.com{}'.format(squad), headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'})
-	request = request = Request('https://fbref.com{}'.format(squad), headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
+	request = Request('https://fbref.com{}'.format(squad), headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
 	 'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
 	 'Accept':'text/html,application/xhtml+xml,application/xml;'
 	 'q=0.9,image/webp,*/*;q=0.8'})
@@ -60,6 +62,5 @@ def getPlayers(squad):
 	for link in soup.find("table").find_all('a', href = re.compile('(\/players\/)(.){9}(?!(matchlogs))')):
 		links.append(link.attrs['href'])	
 	return links
-
 
 crawl(leagues)
