@@ -3,17 +3,6 @@ from urllib.request import urlopen
 from urllib.request import Request
 import re
 
-
-#Create a BS object from a single webpage
-url = 'https://fbref.com/en/players/b9fbae28/NGolo-Kante'
-request = Request(url, headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
- 'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
- 'Accept':'text/html,application/xhtml+xml,application/xml;'
- 'q=0.9,image/webp,*/*;q=0.8'})
-html = urlopen(request)
-soup = BeautifulSoup(html, 'html.parser')
-
-
 #List of desired tables 
 tables = [
 	'stats_keeper_dom_lg',
@@ -29,37 +18,62 @@ tables = [
 	'stats_misc_dom_lg',
 	]
 
-season = '2019-2020'
+season = '2020-2021'
 
 # Scrape player performance statistics from a single page 
-def scrapeStats(soup, tables):
-	statDict = {}
+def scrapeStats(player, tables):
+	#Fetch the html
+	url = 'https://fbref.com{}'.format(player)
+	try:
+		request = Request(url, headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
+		'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
+		'Accept':'text/html,application/xhtml+xml,application/xml;'
+		'q=0.9,image/webp,*/*;q=0.8'})
+	except: 
+		print("playerInfo: scrapeInfo: Exception was raised when trying to create a Request object.")
+	try:
+		html = urlopen(request)
+	except:
+		print("playerInfo: scrapeInfo: Exception was raised when trying to open the url request.")
+		print("Exception was raised when trying to create a Request object.")
+	try:
+		html = urlopen(request)
+	except:
+		print("Exception was raised when trying to open the url request.")
 
-	# Standard stats table
-	header = soup.find('table', {'id':tables[0]}).find('th', text="Season")
-	cell = soup.find('table', {'id':tables[0]}).find('th', text=season)
-	statDict[header.get_text()] = cell.get_text()
-	while (header.find_next_sibling('th').get_text() != "Matches"):
-			header = header.find_next_sibling('th')
-			cell = cell.find_next_sibling('td')
-			if header.get_text() in statDict:
-				try:
-					statDict[header.get_text() +  '/90']= cell.get_text()
-				except KeyError:
-					statDict[header.get_text()] = cell.get_text()
-			else:
-				statDict[header.get_text()] = cell.get_text()
+	soup = BeautifulSoup(html, 'html.parser')
 
-	# Rest of the tables
-	for i in range(len(tables)-1):
-		header = soup.find('table', {'id':tables[i+1]}).find('th', text="Season")
-		cell = soup.find('table', {'id':tables[i+1]}).find('th', text=season)
-		statDict[header.get_text()] = cell.get_text()
-		while (header.find_next_sibling('th').get_text() != "Matches"):
-			header = header.find_next_sibling('th')
-			cell = cell.find_next_sibling('td')
-			statDict[header.get_text()] = cell.get_text()
-	return cleanStats(statDict)
+	all_dicts = []
+
+	for i in range(0, len(tables)):
+		
+		table = soup.find('table', {'id':tables[i]})
+		all_dicts.append(dict())
+		stat_dict = all_dicts[i]
+		stat_dict['table'] = tables[i]
+		
+		if table != None:
+			cell = table.find('th', text=season)
+			attr_name = cell.attrs['data-stat']
+			if cell != None:
+				while (cell.find_next_sibling('td').get_text() != "Matches"):
+					cell = cell.find_next_sibling('td')
+					attr_name = cell.attrs['data-stat']
+					if attr_name in stat_dict:
+						pass
+					else:
+						try:
+							stat_dict[attr_name] = float(cell.get_text())
+						except ValueError:
+							#print("Not a number.")
+							stat_dict[attr_name] = cell.get_text()
+	
+	all_dicts = [all_dicts[i] for i in range(len(all_dicts)) if len(all_dicts[i]) != 1]
+
+	for dictionary in all_dicts:
+		print(dictionary)
+
+	return all_dicts
 
 def getStatsHeader(url, tables):
 
