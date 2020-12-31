@@ -118,7 +118,7 @@ def addStats(stats):
     #Add data
     for table in stats:                     #for each dictionary in the list
         try:
-            cur.execute("INSERT INTO {} ({}) VALUES ('{}');" .format(table['table'], 'id', table['id']))
+            cur.execute("REPLACE INTO {} ({}) VALUES ('{}');" .format(table['table'], 'id', table['id']))
             cur.connection.commit()
         except:
             print("database: addStats: Exception was raised when trying to insert primary key (id).")
