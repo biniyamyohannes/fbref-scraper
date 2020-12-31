@@ -25,7 +25,6 @@ def scrapeInfo(player):
 		html = urlopen(request)
 	except:
 		print("playerInfo: scrapeInfo: Exception was raised when trying to open the url request.")
-		print("Exception was raised when trying to create a Request object.")
 	try:
 		html = urlopen(request)
 	except:

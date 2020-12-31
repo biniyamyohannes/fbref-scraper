@@ -20,7 +20,6 @@ def scrapeStats(player, tables):
 		html = urlopen(request)
 	except:
 		print("playerInfo: scrapeInfo: Exception was raised when trying to open the url request.")
-		print("Exception was raised when trying to create a Request object.")
 	try:
 		html = urlopen(request)
 	except:
@@ -28,7 +27,7 @@ def scrapeStats(player, tables):
 
 	soup = BeautifulSoup(html, 'html.parser')
 
-	tables[0], tables[2] = tables[2], tables[0] 							#FIX/GET RID OF THIS
+	tables[0], tables[1], tables[2] = tables[1], tables[2], tables[0] 							#FIX/GET RID OF THIS
 	all_dicts = []
 
 	for i in range(0, len(tables)):
@@ -36,32 +35,32 @@ def scrapeStats(player, tables):
 		table = soup.find('table', {'id':tables[i]})
 		all_dicts.append(dict())
 		stat_dict = all_dicts[i]
-		stat_dict['table'] = tables[i]
+		stat_dict['table'] = tables[i][6:-7] # stats_keeper_dom_lg
 		
 		if table != None:
 			stat_dict['id'] = re.search('(/......../)', url).group(1).strip('/')
 			cell = table.find('th', text=season)
 			attr_name = cell.attrs['data-stat']
-			if cell != None:
-				if any(attr_name in dictionary for dictionary in all_dicts):			# first cell
+			if cell != None:			#if the table exists
+				if any(attr_name in dictionary for dictionary in all_dicts) or (attr_name in ['age','squad', 'country', 'comp_level', 'lg_finish']):			# first cell
 					pass
 				else:
+					stat = cell.get_text().replace(',','')
 					try:
-						stat_dict[attr_name] = float(cell.get_text())
+						stat_dict[attr_name] = float(stat)
 					except ValueError:
-						#print("Not a number.")
-						stat_dict[attr_name] = cell.get_text()
+						stat_dict[attr_name] = stat
 				while (cell.find_next_sibling('td').get_text() != "Matches"):			# rest of the cells
 					cell = cell.find_next_sibling('td')
 					attr_name = cell.attrs['data-stat']
-					if any(attr_name in dictionary for dictionary in all_dicts):
-						pass
+					if any(attr_name in dictionary for dictionary in all_dicts) or (attr_name in ['age','squad', 'country', 'comp_level', 'lg_finish']):
+						continue
 					else:
+						stat = cell.get_text().replace(',','')
 						try:
-							stat_dict[attr_name] = float(cell.get_text())
+							stat_dict[attr_name] = float(stat)
 						except ValueError:
-							#print("Not a number.")
-							stat_dict[attr_name] = cell.get_text()
+							stat_dict[attr_name] = stat
 	
 	all_dicts = [all_dicts[i] for i in range(len(all_dicts)) if len(all_dicts[i]) != 1]
 
@@ -96,7 +95,7 @@ def getStatsHeader(url, tables):
 
 	# Columns of the general goalkeeping table have to be added manually because bf4 search didn't work
 	if soup.find('table', {'id':tables[0]}) != None:
-		columns[0].append(tables[0])
+		columns[0].append(tables[0][6:-7])
 		gk_columns = ['goals_against_gk',
 					  'goals_against_per90_gk',
 					  'shots_on_target-against',
@@ -119,10 +118,10 @@ def getStatsHeader(url, tables):
 		try:
 			columns.append([])	
 			header = soup.find('table', {'id':tables[i]}).find('th', text="Season") #find the first column			
-			columns[i].append(tables[i])									
+			columns[i].append(tables[i][6:-7])									
 			while (header.find_next_sibling('th').get_text() != "Matches"):
 				header = header.find_next_sibling('th')
-				if any(header.attrs['data-stat'] in column for column in columns):
+				if any(header.attrs['data-stat'] in column for column in columns) or (header.attrs['data-stat'] in ['age','squad', 'country', 'comp_level', 'lg_finish']):
 					pass
 				else:
 					columns[i].append(header.attrs['data-stat'])

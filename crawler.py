@@ -37,7 +37,7 @@ tables = [
     ]
 
 def crawl(leagues):
-    header = ['name', 'position', 'foot', 'height', 'weight', 'dob', 'cityob', 'countryob', 'nt', 'club', 'age']
+    header = ['name', 'position', 'foot', 'height', 'weight', 'dob', 'cityob', 'countryob', 'nt', 'club', 'age'] #needs to be added manually since the formatting is inconsistent
     outfield_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[0], tables)
     keeper_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[1], tables)
     db.createInfoTable(header)
