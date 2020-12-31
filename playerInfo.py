@@ -84,7 +84,6 @@ def scrapeInfo(player):
 		info['age'] = getAge(info['dob'])	#age uses the obsolete <nobr> tag, which it seems BF4 is not recognizing
 	except:
 		print("playerInfo: scrapeInfo: Exception was raised when trying to scrape player info.")
-		print("Exception was raised when trying to scrape player info.")
 	try:
 		info['name'] = header.h1.span.get_text()		
 	except:

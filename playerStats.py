@@ -3,21 +3,6 @@ from urllib.request import urlopen
 from urllib.request import Request
 import re
 
-#List of desired tables 
-tables = [
-	'stats_keeper_dom_lg',
-	'stats_keeper_adv_dom_lg',
-	'stats_standard_dom_lg',
-	'stats_shooting_dom_lg',
-	'stats_passing_dom_lg',
-	'stats_passing_types_dom_lg',
-	'stats_gca_dom_lg',
-	'stats_defense_dom_lg',
-	'stats_possession_dom_lg',
-	'stats_playing_time_dom_lg',
-	'stats_misc_dom_lg',
-	]
-
 season = '2020-2021'
 
 # Scrape player performance statistics from a single page 
@@ -43,7 +28,7 @@ def scrapeStats(player, tables):
 
 	soup = BeautifulSoup(html, 'html.parser')
 
-	tables[0], tables[2] = tables[2], tables[0] 	#FIX/GET RID OF THIS
+	tables[0], tables[2] = tables[2], tables[0] 							#FIX/GET RID OF THIS
 	all_dicts = []
 
 	for i in range(0, len(tables)):
@@ -54,6 +39,7 @@ def scrapeStats(player, tables):
 		stat_dict['table'] = tables[i]
 		
 		if table != None:
+			stat_dict['id'] = re.search('(/......../)', url).group(1).strip('/')
 			cell = table.find('th', text=season)
 			attr_name = cell.attrs['data-stat']
 			if cell != None:
@@ -71,8 +57,8 @@ def scrapeStats(player, tables):
 	
 	all_dicts = [all_dicts[i] for i in range(len(all_dicts)) if len(all_dicts[i]) != 1]
 
-	#for dictionary in all_dicts:
-	#	print(dictionary)
+	for dictionary in all_dicts:
+		print(dictionary)
 
 	return all_dicts
 

@@ -14,17 +14,32 @@ import playerStats as ps
 import time
 import re
 
+# List of leagues to crawl
 leagues = ['https://fbref.com/en/comps/12/La-Liga-Stats',
 		   'https://fbref.com/en/comps/13/Ligue-1-Stats',
 		   'https://fbref.com/en/comps/9/Premier-League-Stats',
 		   'https://fbref.com/en/comps/20/Bundesliga-Stats',
 		   'https://fbref.com/en/comps/11/Serie-A-Stats']
 
+# List of tables to collect 
+tables = [
+    'stats_keeper_dom_lg',
+    'stats_keeper_adv_dom_lg',
+    'stats_standard_dom_lg',
+    'stats_shooting_dom_lg',
+    'stats_passing_dom_lg',
+    'stats_passing_types_dom_lg',
+    'stats_gca_dom_lg',
+    'stats_defense_dom_lg',
+    'stats_possession_dom_lg',
+    'stats_playing_time_dom_lg',
+    'stats_misc_dom_lg',
+    ]
 
 def crawl(leagues):
     header = ['name', 'position', 'foot', 'height', 'weight', 'dob', 'cityob', 'countryob', 'nt', 'club', 'age']
-    outfield_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[0], ps.tables)
-    keeper_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[1], ps.tables)
+    outfield_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[0], tables)
+    keeper_tables = ps.getStatsHeader(getPlayers(getSquads(leagues[0])[0])[1], tables)
     db.createInfoTable(header)
     db.createStatsTables(outfield_tables)
     db.createStatsTables(keeper_tables)
@@ -34,6 +49,7 @@ def crawl(leagues):
             for player in getPlayers(squad):
                 print(pi.scrapeInfo(player))
                 db.addInfo(pi.scrapeInfo(player))
+                db.addStats(ps.scrapeStats(player, tables))
                 print("Sleep for 2 seconds.\n")
                 time.sleep(2.0)
 
