@@ -55,7 +55,7 @@ def createStatsTables(tables):
     #Create tables
     for table in tables:
         try:
-            cur.execute('CREATE TABLE IF NOT EXISTS %s (id VARCHAR(8) NOT NULL, FOREIGN KEY(id) REFERENCES info(id));' %(table[0]))
+            cur.execute('CREATE TABLE IF NOT EXISTS %s (id VARCHAR(8) NOT NULL, PRIMARY KEY(id), FOREIGN KEY(id) REFERENCES info(id));' %(table[0]))
         except:
             #print("database: createStatsTable: Exception was raised when trying to create a table.")
             pass
@@ -127,15 +127,15 @@ def addStats(stats):
                 pass
             else:
                 try:
-                    print('UPDATE {0} SET {1} = {2} WHERE id = "{3}";' .format(table['table'], column, table[column], table['id']))
+                    print('REPLACE INTO {0} SET {1} = {2} WHERE id = "{3}";' .format(table['table'], column, table[column], table['id']))
                     cur.execute('UPDATE {0} SET {1} = {2} WHERE id = "{3}";' .format(table['table'], column, table[column], table['id']))
                     cur.connection.commit()
                 except:
-                    print("database: addInfo: Exception was raised when trying to update a column.")
+                    print("database: addStats: Exception was raised when trying to update a column.")
 
     #Close Connection
     try:
         conn.close()
         cur.close()
     except:
-        print("database: addInfo: Exception was raised when trying to close the connection/cursor.")
+        print("database: addStats: Exception was raised when trying to close the connection/cursor.")
