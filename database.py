@@ -8,7 +8,7 @@ def createInfoTable(header):
     #Connect to MySql
     try:
         conn = pymysql.connect(host='localhost',
-        user='root', passwd='Jolaus2333', db='SoccerStats')
+        user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
     except:
         print("database: createTable: Exception was raised when trying to establish a connection to mysql.")
@@ -47,7 +47,7 @@ def createStatsTables(tables):
     #Connect to MySql
     try:
         conn = pymysql.connect(host='localhost',
-        user='root', passwd='Jolaus2333', db='SoccerStats')
+        user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
     except:
         print("database: createTable: Exception was raised when trying to establish a connection to mysql.")
@@ -74,7 +74,7 @@ def addInfo(info):
 	#Connect to MySQL database
     try:
         conn = pymysql.connect(host='localhost',
-        user='root', passwd='Jolaus2333', db='SoccerStats')
+        user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
     except:
         print("database: addInfo: Exception was raised when trying to establish a connection to mysql.")
@@ -109,7 +109,7 @@ def addStats(stats):
     try:
         conn = pymysql.connect(host='localhost',
             user='root',
-            passwd='Jolaus2333',
+            passwd='',
             db='SoccerStats')
         cur = conn.cursor()
     except:
