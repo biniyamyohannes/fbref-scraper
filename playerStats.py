@@ -43,7 +43,15 @@ def scrapeStats(player, tables):
 			cell = table.find('th', text=season)
 			attr_name = cell.attrs['data-stat']
 			if cell != None:
-				while (cell.find_next_sibling('td').get_text() != "Matches"):
+				if any(attr_name in dictionary for dictionary in all_dicts):			# first cell
+					pass
+				else:
+					try:
+						stat_dict[attr_name] = float(cell.get_text())
+					except ValueError:
+						#print("Not a number.")
+						stat_dict[attr_name] = cell.get_text()
+				while (cell.find_next_sibling('td').get_text() != "Matches"):			# rest of the cells
 					cell = cell.find_next_sibling('td')
 					attr_name = cell.attrs['data-stat']
 					if any(attr_name in dictionary for dictionary in all_dicts):
@@ -89,7 +97,20 @@ def getStatsHeader(url, tables):
 	# Columns of the general goalkeeping table have to be added manually because bf4 search didn't work
 	if soup.find('table', {'id':tables[0]}) != None:
 		columns[0].append(tables[0])
-		gk_columns = ['season', 'age', 'squad', 'country', 'comp_level', 'lg_finish', 'games', 'games_starts', 'minutes', 'GA', 'GA90', 'SoTA', 'Saves', 'Save%', 'W', 'D', 'L', 'CS', 'CS%', 'PKatt', 'PKA', 'PKsv', 'PKm']
+		gk_columns = ['goals_against_gk',
+					  'goals_against_per90_gk',
+					  'shots_on_target-against',
+					  'saves', 
+					  'save_pct',
+					  'wins_gk',
+					  'draws_gk',
+					  'losses_gk',
+					  'clean_sheets',
+					  'clean_sheets_pct',
+					  'pens_att_gk',
+					  'pens_allowd',
+					  'pens_saved',
+					  'pens_missed_gk']
 		for i in range(len(gk_columns)):
 			columns[0].append(gk_columns[i])
 
