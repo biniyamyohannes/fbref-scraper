@@ -43,6 +43,7 @@ def scrapeStats(player, tables):
 
 	soup = BeautifulSoup(html, 'html.parser')
 
+	tables[0], tables[2] = tables[2], tables[0] 	#FIX/GET RID OF THIS
 	all_dicts = []
 
 	for i in range(0, len(tables)):
@@ -59,7 +60,7 @@ def scrapeStats(player, tables):
 				while (cell.find_next_sibling('td').get_text() != "Matches"):
 					cell = cell.find_next_sibling('td')
 					attr_name = cell.attrs['data-stat']
-					if attr_name in stat_dict:
+					if any(attr_name in dictionary for dictionary in all_dicts):
 						pass
 					else:
 						try:
@@ -70,8 +71,8 @@ def scrapeStats(player, tables):
 	
 	all_dicts = [all_dicts[i] for i in range(len(all_dicts)) if len(all_dicts[i]) != 1]
 
-	for dictionary in all_dicts:
-		print(dictionary)
+	#for dictionary in all_dicts:
+	#	print(dictionary)
 
 	return all_dicts
 
