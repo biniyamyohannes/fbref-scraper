@@ -40,12 +40,14 @@ def scrapeStats(player, tables):
 		if table != None:
 			stat_dict['id'] = re.search('(/......../)', url).group(1).strip('/')
 			cell = table.find('th', text=season)
-			attr_name = cell.attrs['data-stat']
 			if cell != None:			#if the table exists
+				attr_name = cell.attrs['data-stat']
 				if any(attr_name in dictionary for dictionary in all_dicts) or (attr_name in ['age','squad', 'country', 'comp_level', 'lg_finish']):			# first cell
 					pass
 				else:
-					stat = cell.get_text().replace(',','')
+					stat = cell.get_text()
+					if (',' in stat):
+						stat = stat.replace(',','')
 					try:
 						stat_dict[attr_name] = float(stat)
 					except ValueError:
@@ -56,7 +58,9 @@ def scrapeStats(player, tables):
 					if any(attr_name in dictionary for dictionary in all_dicts) or (attr_name in ['age','squad', 'country', 'comp_level', 'lg_finish']):
 						continue
 					else:
-						stat = cell.get_text().replace(',','')
+						stat = cell.get_text()
+						if (',' in stat):
+							stat = stat.replace(',','')
 						try:
 							stat_dict[attr_name] = float(stat)
 						except ValueError:
@@ -107,7 +111,7 @@ def getStatsHeader(url, tables):
 					  'clean_sheets',
 					  'clean_sheets_pct',
 					  'pens_att_gk',
-					  'pens_allowd',
+					  'pens_allowed',
 					  'pens_saved',
 					  'pens_missed_gk']
 		for i in range(len(gk_columns)):
