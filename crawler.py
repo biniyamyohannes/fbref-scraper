@@ -79,4 +79,8 @@ def getPlayers(squad):
 		links.append(link.attrs['href'])	
 	return links
 
-crawl(leagues)
+#crawl(leagues)
+
+
+ps.scrapeStats('/en/players/1d2d5cc8/Steve-Mandanda', tables)
+db.addStats(ps.scrapeStats(player, tables))
