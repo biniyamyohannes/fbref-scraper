@@ -6,7 +6,7 @@ import re
 season = '2020-2021'
 
 # Scrape player performance statistics from a single page 
-def scrapeStats(player, tables):
+def scrape_stats(player, tables):
 	#Fetch the html
 	url = 'https://fbref.com{}'.format(player)
 	try:
@@ -15,15 +15,11 @@ def scrapeStats(player, tables):
 		'Accept':'text/html,application/xhtml+xml,application/xml;'
 		'q=0.9,image/webp,*/*;q=0.8'})
 	except: 
-		print("playerInfo: scrapeInfo: Exception was raised when trying to create a Request object.")
+		print("playerInfo: scrape_info: Exception was raised when trying to create a Request object.")
 	try:
 		html = urlopen(request)
 	except:
-		print("playerInfo: scrapeInfo: Exception was raised when trying to open the url request.")
-	try:
-		html = urlopen(request)
-	except:
-		print("Exception was raised when trying to open the url request.")
+		print("playerInfo: scrape_info: Exception was raised when trying to open the url request.")
 
 	soup = BeautifulSoup(html, 'html.parser')
 
@@ -73,7 +69,7 @@ def scrapeStats(player, tables):
 
 	return all_dicts
 
-def getStatsHeader(url, tables):
+def get_stats_header(url, tables):
 
 	#Fetch the html
 	url = 'https://fbref.com{}'.format(url)
@@ -83,16 +79,12 @@ def getStatsHeader(url, tables):
 		'Accept':'text/html,application/xhtml+xml,application/xml;'
 		'q=0.9,image/webp,*/*;q=0.8'})
 	except: 
-		print("playerInfo: scrapeInfo: Exception was raised when trying to create a Request object.")
+		print("playerInfo: scrape_info: Exception was raised when trying to create a Request object.")
 	try:
 		html = urlopen(request)
 	except:
-		print("getStatsHeader: scrapeInfo: Exception was raised when trying to open the url request.")
+		print("get_stats_header: scrape_info: Exception was raised when trying to open the url request.")
 		print("Exception was raised when trying to create a Request object.")
-	try:
-		html = urlopen(request)
-	except:
-		print("Exception was raised when trying to open the url request.")
 
 	soup = BeautifulSoup(html, 'html.parser')
 	columns = [[]]
@@ -130,7 +122,7 @@ def getStatsHeader(url, tables):
 				else:
 					columns[i].append(header.attrs['data-stat'])
 		except:
-			print('getStatsHeader: Something went wrong trying to scrape columns.')
+			print('get_stats_header: Something went wrong trying to scrape columns.')
 
 	columns = [columns[i] for i in range(len(columns)) if columns[i] != []]
 
