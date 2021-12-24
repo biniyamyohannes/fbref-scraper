@@ -14,11 +14,11 @@ import player_stats
 
 # List of leagues to crawl
 LEAGUES = [
-    'https://fbref.com/en/comps/12/La-Liga-Stats',
-    'https://fbref.com/en/comps/13/Ligue-1-Stats',
-    'https://fbref.com/en/comps/9/Premier-League-Stats',
-    'https://fbref.com/en/comps/20/Bundesliga-Stats',
-    'https://fbref.com/en/comps/11/Serie-A-Stats'
+    '/en/comps/12/La-Liga-Stats',
+    '/en/comps/13/Ligue-1-Stats',
+    '/en/comps/9/Premier-League-Stats',
+    '/en/comps/20/Bundesliga-Stats',
+    '/en/comps/11/Serie-A-Stats'
 ]
 
 # List of tables to collect per player
@@ -76,13 +76,11 @@ def get_squads(league: str) -> List[str]:
     Returns:
         List of strings. Each string is a unique team URL.
     """
-    request = Request(league, headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
-                                                    'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
-                                       'Accept': 'text/html,application/xhtml+xml,application/xml;'
-                                                 'q=0.9,image/webp,*/*;q=0.8'})
-    html = urlopen(request)
-    soup = BeautifulSoup(html, 'html.parser')
+    url = f'https://fbref.com{league}'
+    soup = get_soup(url)
+
     links = []
+
     for link in soup.find("table").find_all('a', href=re.compile('(\/squads\/)')):
         links.append(link.attrs['href'])
     return links
