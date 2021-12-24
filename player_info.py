@@ -4,36 +4,7 @@
 from datetime import date
 from time import strptime
 import re
-from typing import Dict
-from urllib.request import urlopen
-from urllib.request import Request
-from bs4 import BeautifulSoup
-
-
-def get_soup(url: str) -> Dict:
-    """
-    Fetch the html for the given player URL and return a BeautifulSoup object.
-
-    Arguments:
-        url -- player's URL as a string
-    """
-    try:
-        request = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
-                                                      'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
-                                        'Accept': 'text/html,application/xhtml+xml,application/xml;'
-                                                  'q=0.9,image/webp,*/*;q=0.8'})
-    except:
-        print("Exception was raised when trying to create a Request object.")
-    try:
-        html = urlopen(request)
-    except:
-        print("Exception was raised when trying to open the url request.")
-    try:
-        return BeautifulSoup(html, 'html.parser')
-    except:
-        print("Exception was raised when trying to create a soup object from the given html.")
-        return None
-
+from crawler import get_soup
 
 def scrape_info(player):
     """
@@ -113,7 +84,6 @@ def scrape_info(player):
 
     # Find the national team the player plays for
     try:
-        print(header.find(text='National Team:').parent.parent.a.get_text(strip=True))
         info['nt'] = header.find(text='National Team:').parent.parent.a.get_text(strip=True)
     except:
         print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
