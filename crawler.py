@@ -48,14 +48,11 @@ def crawl(leagues: List[str]) -> None:
     # (needs to be a goalkeeper since they have all the tables necessary)
     PLAYER = '/en/players/1840e36d/Thibaut-Courtois'
 
-    # Get the column names for the keeper and the outfield player
     player_tables = player_stats.get_stats_headers(PLAYER, TABLES)
 
-    # Create database tables based on the two players
     db.create_info_table()
     db.create_stats_tables(player_tables)
 
-    # Iterate over leagues, teams, and players and scrape player data
     for league in leagues:
         for squad in get_squads(league):
             for player in get_players(squad):
