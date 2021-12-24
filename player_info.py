@@ -1,17 +1,17 @@
 # player_info.py
 """Function to scrape the general player information."""
 
+import re
 from datetime import date
 from time import strptime
-import re
-from crawler import get_soup
+from requests import get_soup
 
 def scrape_info(player):
     """
-    Scrape general information about a player
+    Scrape general information about a player.
 
     Arguments:
-        player  -- string part of the URL that identifies a player
+        player  -- string part of the URL path that identifies a player.
     Returns:
         info    -- a dictionary of player information
                 -- each key is a column (name, position, etc.)
@@ -105,7 +105,7 @@ def scrape_info(player):
 
 def get_age(birthdate: str) -> int:
     """
-    # Calculate age from palyer's DOB.
+    # Calculate age from a player's DOB.
 
     Arguments:
         birthdate   -- string representing the player's date of birth (m, d, y)
@@ -114,7 +114,7 @@ def get_age(birthdate: str) -> int:
     """
     dob_list = birthdate.split()
     birthdate_year = int(dob_list[2], 10)
-    birthdate_day = int(dob_list[1].rstrip(','), 10)  # get rid of comma after day, convert to int
+    birthdate_day = int(dob_list[1].rstrip(','), 10)
     birthdate_month = strptime(dob_list[0][0:3], '%b').tm_mon
     today = date.today()
     age = today.year - birthdate_year - ((today.month, today.day)
