@@ -2,7 +2,6 @@
 """Functions that are accessing and modifying the database."""
 
 from typing import List, Dict
-
 import pymysql
 
 
@@ -69,8 +68,8 @@ def create_info_table() -> None:
             try:
                 cur.execute(f'ALTER TABLE info ADD COLUMN {col} INT;')
             except:
-                print("database: create_info_table: "
-                      "Exception was raised when trying to add a column")
+                print(f"database: create_info_table: "
+                      f"Exception was raised when trying to add column {header[col]}.")
 
         # Add columns with string type
         else:
@@ -89,8 +88,8 @@ def create_stats_tables(tables: List[List[str]]) -> None:
 
     Arguments:
         tables -- a list of string lists,
-               -- table[i][0] is the name of the i-th table
-               -- table [i][1:] are the column names for the table
+               -- tables[i][0] is the name of the i-th table
+               -- tables[i][1:] are the column names for the i-th table
     """
     conn, cur = connect_to_db()
 
@@ -98,19 +97,23 @@ def create_stats_tables(tables: List[List[str]]) -> None:
     for table in tables:
         try:
             cur.execute(
-                f'CREATE TABLE IF NOT EXISTS {table[0]} (id VARCHAR(8) NOT NULL, '
-                f'PRIMARY KEY(id), FOREIGN KEY(id) REFERENCES info(id));')
+                f'CREATE TABLE IF NOT EXISTS {table[0]} '
+                f'(id VARCHAR(8) NOT NULL, season VARCHAR(20) NOT NULL, '
+                f'squad VARCHAR(50) NOT NULL, PRIMARY KEY(id, season, squad), '
+                f'FOREIGN KEY(id) REFERENCES info(id));')
         except:
-            print("database: create_stats_table: "
-                  "Exception was raised when trying to create a table.")
+            print(f"database: create_stats_table: "
+                  f"Exception was raised when trying to create table {table[0]}.")
 
         # Add columns for each table
-        for column in range(1, len(table)):
+        for column in table:
+            if column == table[0]:
+                continue
             try:
-                cur.execute(f'ALTER TABLE {table[0]} ADD COLUMN {table[column]} FLOAT;')
+                cur.execute(f'ALTER TABLE {table[0]} ADD COLUMN {column} FLOAT;')
             except:
-                print("database: createStatsTable: "
-                      "Exception was raised when trying to add a column")
+                print(f"database: create_stats_tables: "
+                      f"Exception was raised when trying to add a column {column}.")
 
     close_db_connection(conn, cur)
 
@@ -132,7 +135,7 @@ def add_info(info: Dict) -> None:
         # Insert primary key
         if key == 'id':
             try:
-                cur.execute(f"INSERT INTO info ({key}) "
+                cur.execute(f"REPLACE INTO info ({key}) "
                             f"VALUES ('{info[key]}');")
                 cur.connection.commit()
             except:
@@ -161,44 +164,37 @@ def add_stats(stats: List[Dict]) -> None:
 
     Arguments:
         stats -- list of dictionaries
-              -- each dictionary represents a different table (shooting, passing, etc.)
+              -- each dictionary represents a row of a table (for example playing time for a player in a single season)
     """
     conn, cur = connect_to_db()
 
-    # Iterate over the dictionaries each of which represents one table
+    # Iterate over the dictionaries each of which represents one row of a table
     for table in stats:
+
+        # Insert the key for a table row
+        try:
+            statement = f"""REPLACE INTO {table['table']} (id, season, squad) VALUES ('{table['id']}', '{table['season']}', '{table['squad']}');"""
+            cur.execute(statement)
+            cur.connection.commit()
+        except:
+            print("database: add_stats: "
+                  "Exception was raised when trying to insert primary key (id, season, squad).")
 
         # Iterate over the dict keys each of which represents a table's columns
         for column in table:
 
             # Skip the table name
-            if column == 'table':
-                pass
-
-            # Insert the id value (primary key)
-            elif column == 'id':
-                try:
-                    cur.execute(f'REPLACE INTO {table["table"]} ("id") '
-                                f'VALUES ("{table["id"]}");')
-                    cur.connection.commit()
-                except:
-                    print("database: add_stats: "
-                          "Exception was raised when trying to insert primary key (id).")
+            if column in ['table', 'id', 'season', 'squad']:
+                continue
 
             # Insert data into appropriate columns
-            else:
-                try:
-                    cur.execute(
-                        f'UPDATE {table["table"]} '
-                        f'SET {column} = {table[column]} '
-                        f'WHERE id = "{table["id"]}";')
-                    print(
-                        f'UPDATE {table["table"]} '
-                        f'SET {column} = {table[column]} '
-                        f'WHERE id = "{table["id"]}";')
-                    cur.connection.commit()
-                except:
-                    print("database: add_stats: "
-                          "Exception was raised when trying to update a column.")
+            try:
+                statement = f"""UPDATE {table['table']} SET {column} = {table[column]} WHERE id = '{table['id']}' AND season = '{table['season']}' AND squad = '{table['squad']}';"""
+                cur.execute(statement)
+                print(statement)
+                cur.connection.commit()
+            except:
+                print(f"database: add_stats: "
+                      f"Exception was raised when trying to update column {column}.")
 
     close_db_connection(conn, cur)
