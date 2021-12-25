@@ -1,8 +1,8 @@
-import re
+# player_stats.py
+"""Functions that scrape player stats."""
+
 from typing import List, Dict
 from requests import get_soup
-
-SEASON = '2020-2021'
 
 
 # Scrape player performance statistics from a single page
@@ -11,63 +11,61 @@ def scrape_stats(player: str, tables: List[str]) -> List[Dict]:
     Scrapes stats tables for a single player.
 
     Arguments:
-        player    -- A unique player URL path.
-        tables    -- List of strings each of which is the name of a table to scrape.
+        player       -- A unique player URL path.
+        tables       -- List of strings each of which is the name of a table to scrape.
     Returns:
-        all_dicts -- A list of dictionaries.
-                  -- Each dictionary represents a stats table.
-                  -- Every key is a column and every value is a data point for that column.
+        stats_tables -- A list of dictionaries.
+                     -- Each dictionary represents a row of a stats table.
+                     -- Every key is a column name and every value is a data point for that column.
     """
-    url = 'https://fbref.com{}'.format(player)
+    url = f'https://fbref.com{player}'
     soup = get_soup(url)
 
-    all_tables = []
+    stats_tables = []
 
+    # Iterate over the table names that should be scraped
     for table in tables:
 
-        stats = soup.find('table', {'id': table})
+        # Find the table tag with the given table name
+        stats = soup.find('table', id=table)
 
-        if stats != None:
-            all_tables.append(dict())
-            stat_dict = dict()
-            stat_dict['table'] = table[6:-7]
-            stat_dict['id'] = re.search('(/......../)', url).group(1).strip('/')
-            cell = stats.find('tr', {'id': 'stats'})
+        # If the table doesn't exist, move on to the next table
+        if stats is None:
+            continue
 
-            if cell != None:  # if the table exists
+        # Rows is a list of all the <tr> tags in the current table
+        rows = stats.find_all(name='tr', id='stats')
+
+        # Iterate over the <tr> tags and extract the data from them
+        # Contains all the table cells for a single player/season/club
+        for row in rows:
+
+            # Add the table name and primary key attributes (id, season, squad) to the dictionary
+            season = row.find(name='th').get_text()
+            squad = row.find(name='td', attrs={"data-stat": "squad"}).get_text()
+            stat_dict = {'table': table[6:-7], 'id': player[12:20], 'season': season, 'squad': squad}
+
+            # All html table cells in a single table row
+            cells = row.find_all(name='td')
+
+            # cell is a single html table cell (a <td> tag)
+            for cell in cells:
+
+                # attr_name is the name of the attribute's cell (season, age, etc.)
                 attr_name = cell.attrs['data-stat']
-                if any(attr_name in dictionary for dictionary in all_tables) or (
-                        attr_name in ['age', 'country', 'comp_level', 'lg_finish']):  # first cell
-                    pass
-                else:
-                    stat = cell.get_text()
-                    if (',' in stat):
-                        stat = stat.replace(',', '')
-                    try:
-                        stat_dict[attr_name] = float(stat)
-                    except ValueError:
-                        stat_dict[attr_name] = stat
-                while (cell.find_next_sibling('td').get_text() != "Matches"):  # rest of the cells
-                    cell = cell.find_next_sibling('td')
-                    attr_name = cell.attrs['data-stat']
-                    if any(attr_name in dictionary for dictionary in all_tables) or (
-                            attr_name in ['age', 'country', 'comp_level', 'lg_finish']):
-                        continue
-                    else:
-                        stat = cell.get_text()
-                        if (',' in stat):
-                            stat = stat.replace(',', '')
-                        try:
-                            stat_dict[attr_name] = float(stat)
-                        except ValueError:
-                            stat_dict[attr_name] = stat
 
-    all_tables = [all_tables[i] for i in range(len(all_tables)) if len(all_tables[i]) != 1]
+                # Skip if attribute is part of the primary key or belongs in the info table
+                if attr_name in ['season', 'age', 'squad', 'country', 'comp_level', 'lg_finish', 'matches']:
+                    continue
 
-    for dictionary in all_tables:
-        print(dictionary)
+                # Otherwise, add the attribute and its value to the dictionary
+                cell_value = cell.get_text()
+                stat_dict[attr_name] = cell_value         # add the data point to the dictionary
 
-    return all_tables
+            # Append the dictionary representing a single row to the list
+            stats_tables.append(stat_dict)
+
+    return stats_tables
 
 
 def get_stats_headers(url: str, tables: List[str]) -> List[List[str]]:
@@ -86,14 +84,14 @@ def get_stats_headers(url: str, tables: List[str]) -> List[List[str]]:
     url = f'https://fbref.com{url}'
     soup = get_soup(url)
 
-    columns = []
+    headers = []
 
     for table in tables:
 
         try:
-            # Create a column list, append table name to it
-            columns.append([])
-            columns[-1].append(table[6:-7])
+            # Create a header list, append the table name to it
+            headers.append([])
+            headers[-1].append(table[6:-7])
             header = soup.find('table', {'id': table}).find('th', text="Season")
 
             # Iterate through the rest of the table header
@@ -101,16 +99,16 @@ def get_stats_headers(url: str, tables: List[str]) -> List[List[str]]:
                 column = header.attrs['data-stat']
 
                 # Check for duplicates and columns that belong in the info table
-                if any(column in x for x in columns) or \
-                        column in ['age', 'season', 'squad', 'country', 'comp_level', 'lg_finish']:
+                if column in ['age', 'season', 'squad', 'country', 'comp_level', 'lg_finish'] or\
+                        any(column in x for x in headers):
                     continue
 
                 # Append all the other columns
-                columns[-1].append(column)
+                headers[-1].append(column)
 
         except:
             print('get_stats_headers: Something went wrong trying to scrape columns.')
 
-    columns = [header for header in columns if header != []]
+    headers = [header for header in headers if header != []]
 
-    return columns
+    return headers
