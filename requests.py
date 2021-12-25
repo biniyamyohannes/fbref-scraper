@@ -1,8 +1,12 @@
+# requests.py
+"""Contains the functions for making HTML requests and creating BeautifulSoup objects."""
+
 import re
 from urllib.request import urlopen
 from urllib.request import Request
 from typing import List
 from bs4 import BeautifulSoup
+
 
 def get_soup(url: str) -> BeautifulSoup:
     """
@@ -45,6 +49,7 @@ def get_squads(league: str) -> List[str]:
 
     for link in soup.find("table").find_all('a', href=re.compile('(\/squads\/)')):
         links.append(link.attrs['href'])
+
     return links
 
 
@@ -65,4 +70,5 @@ def get_players(squad: str) -> List[str]:
 
     for link in soup.find("table").find_all('a', href=re.compile('(\/players\/)(.){9}(?!(matchlogs))')):
         links.append(link.attrs['href'])
+
     return links
