@@ -13,7 +13,7 @@ def get_soup(url: str) -> BeautifulSoup:
     Fetch the html for the given player URL and return a BeautifulSoup object.
 
     Arguments:
-        url -- player's URL as a string
+        url -- player's URL path as a string
     """
     try:
         request = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
@@ -22,15 +22,18 @@ def get_soup(url: str) -> BeautifulSoup:
                                                   'q=0.9,image/webp,*/*;q=0.8'})
     except:
         print("Exception was raised when trying to create a Request object.")
+    
     try:
         html = urlopen(request)
     except:
         print("Exception was raised when trying to open the url request.")
+    
     try:
         return BeautifulSoup(html, 'html.parser')
     except:
         print("Exception was raised when trying to create a soup object from the given html.")
         return None
+
 
 def get_squads(league: str) -> List[str]:
     """

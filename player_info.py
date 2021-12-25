@@ -28,7 +28,7 @@ def scrape_info(player):
 
     # Find the unique player ID
     try:
-        info['id'] = re.search('(/......../)', url).group(1).strip('/')
+        info['id'] = player[12:20]
     except:
         print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
 
