@@ -2,9 +2,11 @@
 """Function to scrape the general player information."""
 
 import re
+import unicodedata
 from datetime import date
 from time import strptime
 from requests import get_soup
+
 
 def scrape_info(player):
     """
@@ -38,8 +40,7 @@ def scrape_info(player):
 
     # Find the player's preferred position(s)
     try:
-        info['position'] = (header.find(text="Position:").parent.next_sibling.split('\n', 1)[0])\
-            .strip(" ()',").replace("(", "")
+        info['position'] = header.find(text="Position:").parent.next_sibling.split('▪')[0][1:].replace(u'\xa0', u'')
     except:
         print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
 
