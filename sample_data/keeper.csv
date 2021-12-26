@@ -1,0 +1,14 @@
+"id","season","squad","games_gk","games_starts_gk","minutes_gk","goals_against_gk","goals_against_per90_gk","shots_on_target_against","saves","save_pct","wins_gk","draws_gk","losses_gk","clean_sheets","clean_sheets_pct","pens_att_gk","pens_allowed","pens_saved","pens_missed_gk","pens_save_pct"
+"1840e36d","2008-2009","Genk",1,1,90,2,2,4,2,50,0,1,0,0,0,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2010-2011","Genk",40,40,3600,39,0.97,134,95,70.9,25,8,7,19,47.5,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2011-2012","Atlético Madrid",37,37,3261,41,1.13,135,94,69.6,14,11,11,15,40.5,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2012-2013","Atlético Madrid",37,37,3330,29,0.78,120,91,75.8,22,7,8,20,54.1,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2013-2014","Atlético Madrid",37,37,3330,24,0.65,96,72,75,28,6,3,20,54.1,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2014-2015","Chelsea",32,32,2813,30,0.96,103,73,70.9,19,9,3,12,37.5,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2015-2016","Chelsea",23,23,2020,29,1.29,93,64,68.8,8,9,5,5,21.7,NULL,NULL,NULL,NULL,NULL
+"1840e36d","2016-2017","Chelsea",36,36,3240,28,0.78,99,71,73.7,29,3,4,16,44.4,2,2,0,0,0
+"1840e36d","2017-2018","Chelsea",35,35,3150,34,0.97,104,73,69.2,20,6,9,15,42.9,2,2,0,0,0
+"1840e36d","2018-2019","Real Madrid",27,27,2430,36,1.33,100,70,70,14,3,10,8,29.6,8,6,1,1,14.3
+"1840e36d","2019-2020","Real Madrid",34,34,3060,20,0.59,95,74,78.9,23,8,3,18,52.9,0,0,0,0,NULL
+"1840e36d","2020-2021","Real Madrid",38,38,3420,28,0.74,111,90,81.1,25,9,4,17,44.7,9,7,2,0,22.2
+"1840e36d","2021-2022","Real Madrid",19,19,1710,16,0.84,62,47,75.8,14,4,1,7,36.8,1,1,0,0,0
