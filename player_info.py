@@ -2,7 +2,6 @@
 """Function to scrape the general player information."""
 
 import re
-import unicodedata
 from datetime import date
 from time import strptime
 from requests import get_soup
