@@ -15,7 +15,7 @@ def connect_to_db():
     """
     try:
         conn = pymysql.connect(host='localhost',
-                               user='root', passwd='Jolaus2333', db='SoccerStats')
+                               user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
         return conn, cur
 
