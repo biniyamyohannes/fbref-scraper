@@ -1,4 +1,4 @@
-"id","season","squad","games","games_starts","minutes","goals","assists","goals_pens","pens_made","pens_att","cards_yellow","cards_red","goals_per90","assists_per90","goals_assists_per90","goals_pens_per90","goals_assists_pens_per90","xg","npxg","xa","npxg_xa","xg_per90","xa_per90","xg_xa_per90","npxg_per90","npxg_xa_per90"
+"id","season","squad","games","games_starts","minutes","minutes_90s",goals","assists","goals_pens","pens_made","pens_att","cards_yellow","cards_red","goals_per90","assists_per90","goals_assists_per90","goals_pens_per90","goals_assists_pens_per90","xg","npxg","xa","npxg_xa","xg_per90","xa_per90","xg_xa_per90","npxg_per90","npxg_xa_per90"
 "1840e36d","2008-2009","Genk",1,1,90,1,0,0,0,0,0,0,0,0,0,0,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 "1840e36d","2010-2011","Genk",40,40,3600,40,0,0,0,0,0,0,0,0,0,0,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 "1840e36d","2011-2012","Atlético Madrid",37,37,3261,36.2,0,0,0,0,0,1,1,0,0,0,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
