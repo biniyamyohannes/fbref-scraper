@@ -15,7 +15,7 @@ def connect_to_db():
     """
     try:
         conn = pymysql.connect(host='localhost',
-                               user='root', passwd='', db='SoccerStats')
+                               user='root', passwd='Jolaus2333', db='SoccerStats')
         cur = conn.cursor()
         return conn, cur
 
@@ -69,15 +69,15 @@ def create_info_table() -> None:
                 cur.execute(f'ALTER TABLE info ADD COLUMN {col} INT;')
             except:
                 print(f"database: create_info_table: "
-                      f"Exception was raised when trying to add column {header[col]}.")
+                      f"Exception was raised when trying to add int column{col}.")
 
         # Add columns with string type
         else:
             try:
                 cur.execute(f'ALTER TABLE info ADD COLUMN {col} VARCHAR(50);')
             except:
-                print("database: create_info_table: "
-                      "Exception was raised when trying to add a column")
+                print(f"database: create_info_table: "
+                      f"Exception was raised when trying to add string column {col}.")
 
     close_db_connection(conn, cur)
 
@@ -164,16 +164,18 @@ def add_stats(stats: List[Dict]) -> None:
 
     Arguments:
         stats -- list of dictionaries
-              -- each dictionary represents a row of a table (for example playing time for a player in a single season)
+              -- each dictionary represents a row of a table
+              -- (for example playing time for a player in a single season)
     """
     conn, cur = connect_to_db()
 
     # Iterate over the dictionaries each of which represents one row of a table
-    for table in stats:
+    for row in stats:
 
         # Insert the key for a table row
         try:
-            statement = f"""REPLACE INTO {table['table']} (id, season, squad) VALUES ('{table['id']}', '{table['season']}', '{table['squad']}');"""
+            statement = f"""REPLACE INTO {row['table']} (id, season, squad)
+                        VALUES ('{row['id']}', '{row['season']}', '{row['squad']}');"""
             cur.execute(statement)
             cur.connection.commit()
         except:
@@ -181,7 +183,7 @@ def add_stats(stats: List[Dict]) -> None:
                   "Exception was raised when trying to insert primary key (id, season, squad).")
 
         # Iterate over the dict keys each of which represents a table's columns
-        for column in table:
+        for column in row:
 
             # Skip the table name
             if column in ['table', 'id', 'season', 'squad']:
@@ -189,7 +191,11 @@ def add_stats(stats: List[Dict]) -> None:
 
             # Insert data into appropriate columns
             try:
-                statement = f"""UPDATE {table['table']} SET {column} = {table[column]} WHERE id = '{table['id']}' AND season = '{table['season']}' AND squad = '{table['squad']}';"""
+                statement = f"""UPDATE {row['table']}
+                            SET {column} = {float(row[column].replace(',',''))}
+                            WHERE id = '{row['id']}' 
+                            AND season = '{row['season']}' 
+                            AND squad = '{row['squad']}';"""
                 cur.execute(statement)
                 print(statement)
                 cur.connection.commit()
