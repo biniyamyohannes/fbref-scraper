@@ -120,15 +120,7 @@ def get_age(birthdate: str) -> int:
         today = date.today()
         age = today.year - birthdate_year - ((today.month, today.day)
                                              < (birthdate_month, birthdate_day))
-    except IndexError as e:
-        print(e)
-        return None
-
-    except AttributeError as e:
-        print(e)
-        return None
-
-    except ValueError as e:
+    except (IndexError, AttributeError, ValueError) as e:
         print(e)
         return None
 
