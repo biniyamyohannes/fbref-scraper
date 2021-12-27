@@ -3,3 +3,5 @@ __pycache__/
 .idea/
 scraping/
 .pytest_cache/
+tests/_pycache__
+tests/.pytest_cache
