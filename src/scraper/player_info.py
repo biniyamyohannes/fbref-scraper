@@ -4,7 +4,7 @@
 import re
 from datetime import date
 from time import strptime
-from requests import get_soup
+from src.scraper.requests import get_soup
 
 
 def scrape_info(player):
@@ -108,16 +108,28 @@ def get_age(birthdate: str) -> int:
     # Calculate age from a player's DOB.
 
     Arguments:
-        birthdate   -- string representing the player's date of birth (m, d, y)
+        birthdate   -- string representing the player's date of birth (format: 'Month DD, YYYY')
     Returns:
         age         -- player's age in years
     """
-    dob_list = birthdate.split()
-    birthdate_year = int(dob_list[2], 10)
-    birthdate_day = int(dob_list[1].rstrip(','), 10)
-    birthdate_month = strptime(dob_list[0][0:3], '%b').tm_mon
-    today = date.today()
-    age = today.year - birthdate_year - ((today.month, today.day)
-                                         < (birthdate_month, birthdate_day))
+    try:
+        dob_list = birthdate.split()
+        birthdate_year = int(dob_list[2], 10)
+        birthdate_day = int(dob_list[1].rstrip(','), 10)
+        birthdate_month = strptime(dob_list[0][0:3], '%b').tm_mon
+        today = date.today()
+        age = today.year - birthdate_year - ((today.month, today.day)
+                                             < (birthdate_month, birthdate_day))
+    except IndexError as e:
+        print(e)
+        return None
+
+    except AttributeError as e:
+        print(e)
+        return None
+
+    except ValueError as e:
+        print(e)
+        return None
 
     return age

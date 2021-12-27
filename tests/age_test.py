@@ -1,4 +1,4 @@
-from player_info import get_age
+from src.scraper.player_info import get_age
 
 
 def test_age_empty():

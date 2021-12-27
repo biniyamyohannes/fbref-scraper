@@ -5,7 +5,7 @@
 import time
 from typing import List
 import database as db
-from requests import get_players, get_squads
+from src.scraper.requests import get_players, get_squads
 from player_info import scrape_info
 from player_stats import get_stats_headers, scrape_stats
 
@@ -20,8 +20,6 @@ LEAGUES = [
 
 # List of tables to collect per player
 TABLES = [
-    'stats_keeper_dom_lg',
-    'stats_keeper_adv_dom_lg',
     'stats_standard_dom_lg',
     'stats_shooting_dom_lg',
     'stats_passing_dom_lg',
@@ -31,7 +29,10 @@ TABLES = [
     'stats_possession_dom_lg',
     'stats_playing_time_dom_lg',
     'stats_misc_dom_lg',
+    'stats_keeper_dom_lg',
+    'stats_keeper_adv_dom_lg',
 ]
+
 
 def crawl(leagues: List[str]) -> None:
     """

@@ -2,7 +2,7 @@
 """Functions that scrape player stats."""
 
 from typing import List, Dict
-from requests import get_soup
+from src.scraper.requests import get_soup
 
 
 # Scrape player performance statistics from a single page
