@@ -4,9 +4,9 @@
 import re
 from urllib.request import urlopen
 from urllib.request import Request
+from urllib.error import URLError
 from typing import List
 from bs4 import BeautifulSoup
-
 
 def get_soup(url: str) -> BeautifulSoup:
     """
@@ -17,21 +17,23 @@ def get_soup(url: str) -> BeautifulSoup:
     """
     try:
         request = Request(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5)'
-                                                      'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
-                                        'Accept': 'text/html,application/xhtml+xml,application/xml;'
-                                                  'q=0.9,image/webp,*/*;q=0.8'})
-    except:
-        print("Exception was raised when trying to create a Request object.")
-    
+                                                          'AppleWebKit 537.36 (KHTML, like Gecko) Chrome',
+                                            'Accept': 'text/html,application/xhtml+xml,application/xml;'
+                                                      'q=0.9,image/webp,*/*;q=0.8'})
+    except ValueError as e:
+        print("requests: get_soup: ", e)
+        return None
+
     try:
         html = urlopen(request)
-    except:
-        print("Exception was raised when trying to open the url request.")
+    except (ValueError, URLError) as e:
+        print("requests: get_soup: ", e)
+        return None
     
     try:
         return BeautifulSoup(html, 'html.parser')
-    except:
-        print("Exception was raised when trying to create a soup object from the given html.")
+    except Exception as e:
+        print("requests: get_soup: ", e)
         return None
 
 
