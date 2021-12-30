@@ -2,8 +2,8 @@
 """Driver program. Iterates over Leagues, Squads, and Players
  and stores their information into a database."""
 
-
 import time
+from multiprocessing import Pool
 from typing import List
 import database as db
 from src.scraper.requests import get_players, get_squads
@@ -35,6 +35,28 @@ TABLES = [
 ]
 
 
+def scrape(player: str) -> None:
+    """
+    Function to be run by a process from the process pool.
+    Scrapes and stores a single players' data.
+
+    Arguments:
+        player -- Unique player url path.
+    """
+    player_start = time.time()
+
+    player_info = scrape_info(player)
+    print(f'Id: {player_info["id"]}, Name: {player_info["name"]}')
+
+    db.add_info(player_info)
+    db.add_stats(scrape_stats(player, TABLES))
+
+    player_end = time.time()
+
+    print(f'Scraped and stored player data for Id: {player_info["id"]}, Name: {player_info["name"]}.'
+          f' Elapsed time = {player_end - player_start:.2f}.')
+
+
 def crawl(leagues: List[str]) -> None:
     """
     Iteratively crawl a list of soccer leagues and scrape player data.
@@ -43,6 +65,7 @@ def crawl(leagues: List[str]) -> None:
     Arguments:
          leagues -- list of URLs of soccer leagues to scrape
     """
+
     # A player used to determine the format of the stats tables
     # (needs to be a goalkeeper since they have all the tables necessary)
     PLAYER = '/en/players/1840e36d/Thibaut-Courtois'
@@ -52,22 +75,17 @@ def crawl(leagues: List[str]) -> None:
     db.create_info_table()
     db.create_stats_tables(player_tables)
 
-    # TODO
-    #  Add multiprocessing to scrape_stats and measure the performance difference (for a single team/league maybe?)
-    #  Maybe do 4 processes each of which will be launched within 0.5s after the last one
-    #  Or maybe try no sleep and have multiple processes to see if there is a big performance difference
     for league in leagues:
         for squad in get_squads(league):
+            squad_start = time.time()
+            pool = Pool()
             for player in get_players(squad):
-                start = time.time()
-                player_info = scrape_info(player)
-                print(f'Id: {player_info["id"]},', f'Name: {player_info["name"]}')
-                db.add_info(player_info)
-                db.add_stats(scrape_stats(player, TABLES))
-                end = time.time()
-                print(f'Scraped and stored player data. Elapsed time = {end-start}\n')
-                print('Sleep for 2 seconds.\n')
-                time.sleep(2.0)
+                pool.apply_async(scrape, args=(player,))
+            pool.close()
+            pool.join()
+            squad_end = time.time()
+            print(f'Scraped and stored squad data. Elapsed time = {squad_end-squad_start:.2f}.')
+            pass
 
 
 if __name__ == "__main__":
