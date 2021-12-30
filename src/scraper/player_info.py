@@ -20,6 +20,7 @@ def scrape_info(player):
     """
     url = f'https://fbref.com{player}'
     soup = get_soup(url)
+
     header = soup.find('div', {'itemtype': 'https://schema.org/Person'})
 
     # Store general player info in a dictionary
@@ -29,76 +30,76 @@ def scrape_info(player):
     try:
         info['id'] = player[12:20]
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player id.")
 
     # Find the player name
     try:
         info['name'] = header.h1.span.get_text()
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player name.")
 
     # Find the player's preferred position(s)
     try:
         info['position'] = header.find(text="Position:").parent.next_sibling.split('▪')[0][1:].replace(u'\xa0', u'')
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player position.")
 
     # Find the player's preferred foot
     try:
         info['foot'] = header.find(text="Footed:").parent.next_sibling.lstrip()
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player foot.")
 
     # Find player's height
     try:
         info['height'] = int(header.find('span', {'itemprop': 'height'}).get_text().split('c')[0])
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player height.")
 
     # Find player's weight
     try:
         info['weight'] = int(header.find('span', {'itemprop': 'weight'}).get_text().split('k')[0])
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player weight.")
 
     # Find player's date of birth
     try:
         info['dob'] = re.sub(re.compile('(\\n)+( )*'), '', header
                              .find('span', {'itemprop': 'birthDate'}).get_text())
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player dob.")
 
     # Find player's city of birth
     try:
         info['cityob'] = header.find('span', {'itemprop': 'birthPlace'}) \
         .get_text().split(',')[0].split('in ')[1]
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player cityob.")
 
     # Find player;s country of birth
     try:
         info['countryob'] = header.find('span', {'itemprop': 'birthPlace'}) \
         .get_text().split(',')[1].strip()
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player countryob.")
 
     # Find the national team the player plays for
     try:
         info['nt'] = header.find(text='National Team:').parent.parent.a.get_text(strip=True)
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player nt.")
 
     # Find the club the player currently plays for
     try:
         info['club'] = header.find('a', {'href': re.compile('(\/squads\/)')}).get_text()
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player club.")
 
     # Calculate the player's age from his date of birth
     try:
         info['age'] = get_age(info['dob'])
     except:
-        print("playerInfo: scrape_info: Exception was raised when trying to scrape player info.")
+        print("playerInfo: scrape_info: Exception was raised when trying to scrape player age.")
 
     return info
 
@@ -121,7 +122,7 @@ def get_age(birthdate: str) -> int:
         age = today.year - birthdate_year - ((today.month, today.day)
                                              < (birthdate_month, birthdate_day))
     except (IndexError, AttributeError, ValueError) as e:
-        print(e)
+        print("player_info: get_age: ", e)
         return None
 
     return age
