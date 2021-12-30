@@ -2,6 +2,7 @@
 """Driver program. Iterates over Leagues, Squads, and Players
  and stores their information into a database."""
 
+
 import time
 from typing import List
 import database as db
@@ -51,14 +52,21 @@ def crawl(leagues: List[str]) -> None:
     db.create_info_table()
     db.create_stats_tables(player_tables)
 
+    # TODO
+    #  Add multiprocessing to scrape_stats and measure the performance difference (for a single team/league maybe?)
+    #  Maybe do 4 processes each of which will be launched within 0.5s after the last one
+    #  Or maybe try no sleep and have multiple processes to see if there is a big performance difference
     for league in leagues:
         for squad in get_squads(league):
             for player in get_players(squad):
+                start = time.time()
                 player_info = scrape_info(player)
-                print(player_info)
+                print(f'Id: {player_info["id"]},', f'Name: {player_info["name"]}')
                 db.add_info(player_info)
                 db.add_stats(scrape_stats(player, TABLES))
-                print("Sleep for 2 seconds.\n")
+                end = time.time()
+                print(f'Scraped and stored player data. Elapsed time = {end-start}\n')
+                print('Sleep for 2 seconds.\n')
                 time.sleep(2.0)
 
 
