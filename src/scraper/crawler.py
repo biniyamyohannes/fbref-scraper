@@ -43,6 +43,7 @@ def scrape(player: str) -> None:
     Arguments:
         player -- Unique player url path.
     """
+    time.sleep(1.0)
     player_start = time.time()
 
     player_info = scrape_info(player)
@@ -75,17 +76,15 @@ def crawl(leagues: List[str]) -> None:
     db.create_info_table()
     db.create_stats_tables(player_tables)
 
+    pool = Pool()
+
     for league in leagues:
         for squad in get_squads(league):
-            squad_start = time.time()
-            pool = Pool()
             for player in get_players(squad):
                 pool.apply_async(scrape, args=(player,))
-            pool.close()
-            pool.join()
-            squad_end = time.time()
-            print(f'Scraped and stored squad data. Elapsed time = {squad_end-squad_start:.2f}.')
-            pass
+
+    pool.close()
+    pool.join()
 
 
 if __name__ == "__main__":
