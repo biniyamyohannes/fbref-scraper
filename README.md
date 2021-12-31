@@ -10,7 +10,8 @@ Sample run with 8 worker processes:
 A look at the database and a sample query. Select all players who have averaged more than 15 goals per season. No surprises here...
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/66108163/147796075-435540c6-e218-45a5-a2ad-7a4c0e01579e.gif" alt="animated" />
+  <img src="https://user-images.githubusercontent.com/66108163/147796537-e6e0c159-842a-4ea4-afd0-f74f5d653994.gif" alt="animated" />
 </p>
+
 
 ### Full dataset coming soon...
