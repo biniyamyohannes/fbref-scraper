@@ -15,7 +15,7 @@ def connect_to_db():
     """
     try:
         conn = pymysql.connect(host='localhost',
-                               user='root', passwd='Jolaus2333', db='SoccerStats')
+                               user='root', passwd='', db='SoccerStats')
         cur = conn.cursor()
         return conn, cur
 
@@ -151,9 +151,6 @@ def add_info(info: Dict) -> None:
                 cur.execute(f'UPDATE info '
                             f'SET {key} = "{info[key]}" W'
                             f'HERE id = "{info["id"]}";')
-                # print(f'UPDATE info '
-                #       f'SET {key} = "{info[key]}" '
-                #       f'WHERE id = "{info["id"]}";')
                 cur.connection.commit()
             except:
                 print("database: add_info: Exception was raised when trying to update a column.")
@@ -198,7 +195,6 @@ def add_stats(stats: List[Dict]) -> None:
                 statement = f"""UPDATE {row['table']} SET {column} = {float(row[column].replace(',',''))} 
                             WHERE id = '{row['id']}' AND season = '{row['season']}' AND squad = '{row['squad']}';"""
                 cur.execute(statement)
-                # print(statement)
                 cur.connection.commit()
             except:
                 print(f"database: add_stats: "
