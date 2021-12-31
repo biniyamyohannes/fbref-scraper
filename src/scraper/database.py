@@ -15,7 +15,7 @@ def connect_to_db():
     """
     try:
         conn = pymysql.connect(host='localhost',
-                               user='root', passwd='', db='SoccerStats')
+                               user='root', passwd='Jolaus2333', db='SoccerStats')
         cur = conn.cursor()
         return conn, cur
 
@@ -46,7 +46,7 @@ def create_info_table() -> None:
     This db table is created separately from the stats tables because
     this information is not in a html table like the other stats.
     """
-    header = {'name': '', 'position': '', 'foot': '', 'height': 0, 'weight': 0, 'dob': '',
+    HEADER = {'name': '', 'position': '', 'foot': '', 'height': 0, 'weight': 0, 'dob': '',
               'cityob': '', 'countryob': '', 'nt': '', 'club': '', 'age': 0}
 
     conn, cur = connect_to_db()
@@ -61,10 +61,10 @@ def create_info_table() -> None:
         print("database: create_info_table: Exception was raised when trying to create a table.")
 
     # Add columns
-    for col in header:
+    for col in HEADER:
 
         # Add columns with int type
-        if isinstance(header[col], int):
+        if isinstance(HEADER[col], int):
             try:
                 cur.execute(f'ALTER TABLE info ADD COLUMN {col} INT;')
             except:
@@ -203,7 +203,5 @@ def add_stats(stats: List[Dict]) -> None:
             except:
                 print(f"database: add_stats: "
                       f"Exception was raised when trying to update column {column} for player {row['id']}.")
-
-    print(f'Finished adding stats for id {stats[0]["id"]}')
 
     close_db_connection(conn, cur)

@@ -6,7 +6,7 @@ import time
 from multiprocessing import Pool
 from typing import List
 import database as db
-from src.scraper.requests import get_players, get_squads
+from requests import get_players, get_squads
 from player_info import scrape_info
 from player_stats import get_stats_headers, scrape_stats
 
@@ -43,7 +43,7 @@ def scrape(player: str) -> None:
     Arguments:
         player -- Unique player url path.
     """
-    time.sleep(1.0)
+    time.sleep(.5)
     player_start = time.time()
 
     player_info = scrape_info(player)
@@ -55,7 +55,7 @@ def scrape(player: str) -> None:
     player_end = time.time()
 
     print(f'Scraped and stored player data for Id: {player_info["id"]}, Name: {player_info["name"]}.'
-          f' Elapsed time = {player_end - player_start:.2f}.')
+          f' Elapsed time = {player_end - player_start:.2f}s.')
 
 
 def crawl(leagues: List[str]) -> None:
@@ -80,9 +80,8 @@ def crawl(leagues: List[str]) -> None:
 
     for league in leagues:
         for squad in get_squads(league):
-            for player in get_players(squad):
+            for index, player in enumerate(get_players(squad)):
                 pool.apply_async(scrape, args=(player,))
-
     pool.close()
     pool.join()
 

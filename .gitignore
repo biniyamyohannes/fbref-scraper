@@ -3,9 +3,6 @@ ProjectPlan.txt
 scraping/
 __pycache__/
 .pytest_cache/
-tests/_pycache__
-tests/.pytest_cache
-tests/__init__.pyc
 src/__init__.pyc
 src/__pycache__/
 src/scraper/__pycache__/

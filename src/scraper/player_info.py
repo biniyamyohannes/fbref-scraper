@@ -4,7 +4,7 @@
 import re
 from datetime import date
 from time import strptime
-from src.scraper.requests import get_soup
+from requests import get_soup
 
 
 def scrape_info(player):
@@ -22,6 +22,9 @@ def scrape_info(player):
     soup = get_soup(url)
 
     header = soup.find('div', {'itemtype': 'https://schema.org/Person'})
+
+    # TODO
+    #  Add exception handling to the following statement (crashed with HTTP Error 403, probably just an overload on the fbref website)
 
     # Store general player info in a dictionary
     info = {}
