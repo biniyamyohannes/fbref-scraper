@@ -23,9 +23,6 @@ def scrape_info(player):
 
     header = soup.find('div', {'itemtype': 'https://schema.org/Person'})
 
-    # TODO
-    #  Add exception handling to the following statement (crashed with HTTP Error 403, probably just an overload on the fbref website)
-
     # Store general player info in a dictionary
     info = {}
 
@@ -43,7 +40,8 @@ def scrape_info(player):
 
     # Find the player's preferred position(s)
     try:
-        info['position'] = header.find(text="Position:").parent.next_sibling.split('▪')[0][1:].replace(u'\xa0', u'')
+        info['position'] = header.find(text="Position:").parent.next_sibling \
+                               .split('▪')[0][1:].replace('\xa0', '')
     except:
         print("playerInfo: scrape_info: Exception was raised when trying to scrape player position.")
 
@@ -75,14 +73,14 @@ def scrape_info(player):
     # Find player's city of birth
     try:
         info['cityob'] = header.find('span', {'itemprop': 'birthPlace'}) \
-        .get_text().split(',')[0].split('in ')[1]
+            .get_text().split(',')[0].split('in ')[1]
     except:
         print("playerInfo: scrape_info: Exception was raised when trying to scrape player cityob.")
 
     # Find player;s country of birth
     try:
         info['countryob'] = header.find('span', {'itemprop': 'birthPlace'}) \
-        .get_text().split(',')[1].strip()
+            .get_text().split(',')[1].strip()
     except:
         print("playerInfo: scrape_info: Exception was raised when trying to scrape player countryob.")
 
