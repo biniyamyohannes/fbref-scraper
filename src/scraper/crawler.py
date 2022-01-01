@@ -43,6 +43,7 @@ def scrape(player: str) -> None:
     Arguments:
         player -- Unique player url path.
     """
+
     time.sleep(.5)
     player_start = time.time()
 
@@ -67,10 +68,8 @@ def crawl(leagues: List[str]) -> None:
          leagues -- list of URLs of soccer leagues to scrape
     """
 
-    # A player used to determine the format of the stats tables
-    # (needs to be a goalkeeper since they have all the tables necessary)
+    # A single player will be used to determine the table format
     PLAYER = '/en/players/1840e36d/Thibaut-Courtois'
-
     player_tables = get_stats_headers(PLAYER, TABLES)
 
     db.create_info_table()
