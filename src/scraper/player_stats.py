@@ -1,8 +1,6 @@
 # player_stats.py
 """Functions that scrape player stats."""
 
-# TODO
-#  Don't remove redundant columns (especially not age)
 
 from typing import List, Dict
 from requests import get_soup
