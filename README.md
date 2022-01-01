@@ -17,5 +17,5 @@ A MySQL database modeled after the format of tables from fbref. PyMySQL is used 
   <img src="https://user-images.githubusercontent.com/66108163/147796537-e6e0c159-842a-4ea4-afd0-f74f5d653994.gif" alt="animated" />
 </p>
 
-### Dataset
+## Dataset
 You can find the final dataset here: https://www.kaggle.com/biniyamyohannes/soccer-player-data-from-fbrefcom
